@@ -1,0 +1,49 @@
+version: "3"
+
+networks:
+  loki:
+    external: true
+  core:
+    external: true
+
+services:
+  loki:
+    image: grafana/loki:2.4.2
+    volumes:
+      - ../data/loki:/loki
+      - ./config:/etc/loki
+    ports:
+      - "3100:3100"
+    restart: unless-stopped
+    command: -config.file=/etc/loki/loki-config.yml
+    networks:
+      - loki
+      - core
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.loki.entrypoints=websecure"
+      - "traefik.http.routers.loki.rule=Host(`$HOSTNAME`) && PathPrefix(`/loki`)"
+      - "traefik.http.routers.loki.middlewares=loki"
+      - "traefik.http.services.loki.loadbalancer.server.port=3100"
+      - "traefik.http.middlewares.loki.basicauth.users=$LOKI_AUTH"
+
+  grafana:
+    image: grafana/grafana:latest
+    volumes:
+      - ../data/grafana:/var/lib/grafana
+      - ./config:/etc/grafana
+    environment:
+      - GF_SERVER_DOMAIN=$HOSTNAME
+      - GF_SERVER_ROOT_URL=$ROOTURL
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+    networks:
+      - loki
+      - core
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.grafana.entrypoints=websecure"
+      - "traefik.http.routers.grafana.rule=Host(`$HOSTNAME`) && PathPrefix(`/grafana`)"
+      - "traefik.http.services.grafana.loadbalancer.server.port=3000"
+      - "traefik.http.routers.grafana.middlewares=authelia@docker"

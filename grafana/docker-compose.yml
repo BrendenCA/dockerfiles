@@ -7,6 +7,26 @@ networks:
     external: true
 
 services:
+  prometheus:
+    # image: prom/prometheus:latest
+    build: ./prometheus
+    container_name: prometheus
+    expose:
+      - 9090
+    networks:
+      - loki
+      - core
+    environment:
+      - HOST
+    volumes:
+      - ./config/prometheus.yml:/etc/prometheus/prometheus.env.yml:ro
+      - ../data/prometheus:/prometheus
+    restart: unless-stopped
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.enable-lifecycle'
+
   loki:
     image: grafana/loki:2.4.2
     volumes:

@@ -9,17 +9,16 @@ networks:
 services:
   promtail:
     image: grafana/promtail:main
+    container_name: promtail
     volumes:
       - ../data/promtail:/promtail
-      - ./config/promtail-config.yml:/etc/promtail/promtail-config.yml:ro
+      - ./config/promtail.yml:/etc/promtail/promtail.yml:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - /var/log:/var/log:ro
     environment:
       - CLIENT_URL
     restart: unless-stopped
-    command: -config.file=/etc/promtail/promtail-config.yml -config.expand-env=true
-    networks:
-      - loki
+    command: -config.file=/etc/promtail/promtail.yml -config.expand-env=true
 
   node_exporter:
     image: quay.io/prometheus/node-exporter:latest

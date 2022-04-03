@@ -29,3 +29,4 @@ services:
       - "traefik.http.routers.code-server.middlewares=code-server-stripprefix"
       - "traefik.http.middlewares.code-server-stripprefix.stripprefix.prefixes=/code"
     command: --auth none --user-data-dir /home/coder/.config/code-server /home/coder/project
+    restart: unless-stopped

@@ -26,6 +26,7 @@ services:
       - 'traefik.http.routers.api.entrypoints=websecure'
       - 'traefik.http.routers.api.service=api@internal'
       - 'traefik.http.routers.api.middlewares=authelia@docker'
+    restart: unless-stopped
 
   authelia:
     image: authelia/authelia

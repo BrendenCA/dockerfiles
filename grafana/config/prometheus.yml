@@ -9,10 +9,24 @@ scrape_configs:
       labels:
         host: '$HOST'
 
-#  - job_name: 'node'
-#    static_configs:
-#    - targets: ['node-exporter:9100']
+  - job_name: 'node'
+    scheme: https
+    static_configs:
+    - targets: ['$HOSTNAME']
+      labels:
+        host: '$HOST'
+    metrics_path: 'node_exporter'
+    basic_auth:
+      username: '$NODE_EXPORTER_USER'
+      password: '$NODE_EXPORTER_PASS'
 
-#  - job_name: 'cadvisor'
-#    static_configs:
-#    - targets: ['cadvisor:8080']
+  - job_name: 'cadvisor'
+    scheme: https
+    static_configs:
+    - targets: ['$HOSTNAME']
+      labels:
+        host: '$HOST'
+    metrics_path: 'cadvisor/metrics'
+    basic_auth:
+      username: '$CADVISOR_USER'
+      password: '$CADVISOR_PASS'

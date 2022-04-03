@@ -3,6 +3,8 @@ version: "3"
 networks:
   loki:
     external: true
+  core:
+    external: true
 
 services:
   promtail:
@@ -18,3 +20,53 @@ services:
     command: -config.file=/etc/promtail/promtail-config.yml -config.expand-env=true
     networks:
       - loki
+
+  node_exporter:
+    image: quay.io/prometheus/node-exporter:latest
+    container_name: node_exporter
+    command:
+      - '--path.rootfs=/host'
+      - '--web.telemetry-path=/node_exporter'
+    pid: host
+    restart: unless-stopped
+    volumes:
+      - '/:/host:ro,rslave'
+    expose:
+      - 9100
+    networks:
+      - core
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.node_exporter.entrypoints=websecure"
+      - "traefik.http.routers.node_exporter.rule=Host(`$HOSTNAME`) && PathPrefix(`/node_exporter`)"
+      - "traefik.http.routers.node_exporter.middlewares=node_exporter"
+      - "traefik.http.services.node_exporter.loadbalancer.server.port=9100"
+      - "traefik.http.middlewares.node_exporter.basicauth.users=$NODE_EXPORTER_AUTH"
+
+  cadvisor:
+    image: zcube/cadvisor:latest
+    container_name: cadvisor
+    command:
+      - '-url_base_prefix=/cadvisor'
+    expose:
+      - 8080
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    devices:
+      - /dev/kmsg
+    healthcheck:
+      disable: true
+    restart: unless-stopped
+    networks:
+      - core
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.cadvisor.entrypoints=websecure"
+      - "traefik.http.routers.cadvisor.rule=Host(`$HOSTNAME`) && PathPrefix(`/cadvisor`)"
+      - "traefik.http.routers.cadvisor.middlewares=cadvisor"
+      - "traefik.http.services.cadvisor.loadbalancer.server.port=8080"
+      - "traefik.http.middlewares.cadvisor.basicauth.users=$CADVISOR_AUTH"

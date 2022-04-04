@@ -25,8 +25,7 @@ services:
       - "traefik.http.routers.code-server.entrypoints=websecure"
       - "traefik.http.routers.code-server.rule=Host(`$HOSTNAME`) && PathPrefix(`/code`)"
       - "traefik.http.services.code-server.loadbalancer.server.port=8080"
-      - "traefik.http.routers.code-server.middlewares=authelia@docker"
-      - "traefik.http.routers.code-server.middlewares=code-server-stripprefix"
+      - "traefik.http.routers.code-server.middlewares=authelia@docker,code-server-stripprefix"
       - "traefik.http.middlewares.code-server-stripprefix.stripprefix.prefixes=/code"
     command: --auth none --user-data-dir /home/coder/.config/code-server /home/coder/project
     restart: unless-stopped

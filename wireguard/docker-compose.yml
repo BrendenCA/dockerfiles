@@ -1,4 +1,5 @@
 version: "3"
+
 services:
   wireguard:
     image: lscr.io/linuxserver/wireguard
@@ -18,8 +19,5 @@ services:
     volumes:
       - ../data/wireguard:/config
       - /lib/modules:/lib/modules
-    ports:
-      - $SERVERPORT:51820/udp
-    sysctls:
-      - net.ipv4.conf.all.src_valid_mark=1
+    network_mode: host
     restart: unless-stopped

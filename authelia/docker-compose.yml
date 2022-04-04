@@ -32,8 +32,8 @@ services:
       - 'traefik.http.middlewares.authelia.forwardauth.address=http://authelia:9091/api/verify?rd=https://$HOSTNAME/auth/'
       - 'traefik.http.middlewares.authelia.forwardauth.trustForwardHeader=true'
       - 'traefik.http.middlewares.authelia.forwardauth.authResponseHeaders=Remote-User,Remote-Groups,Remote-Name,Remote-Email'
-    expose:
-      - 9091
+    ports:
+      - 9091:9091
     restart: unless-stopped
     healthcheck:
       disable: true

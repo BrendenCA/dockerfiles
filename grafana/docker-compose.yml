@@ -46,6 +46,7 @@ services:
       - core
     labels:
       - "traefik.enable=true"
+      - "traefik.docker.network=core"
       - "traefik.http.routers.loki.entrypoints=websecure"
       - "traefik.http.routers.loki.rule=Host(`$HOSTNAME`) && PathPrefix(`/loki`)"
       - "traefik.http.routers.loki.middlewares=loki"
@@ -69,6 +70,7 @@ services:
       - core
     labels:
       - "traefik.enable=true"
+      - "traefik.docker.network=core"
       - "traefik.http.routers.grafana.entrypoints=websecure"
       - "traefik.http.routers.grafana.rule=Host(`$HOSTNAME`) && PathPrefix(`/grafana`)"
       - "traefik.http.services.grafana.loadbalancer.server.port=3000"

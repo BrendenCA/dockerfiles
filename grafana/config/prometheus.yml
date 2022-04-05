@@ -15,6 +15,9 @@ scrape_configs:
     - targets: ['${HOSTNAME}']
       labels:
         host: '${HOST}'
+    - targets: ['${HOSTNAME_2}']
+      labels:
+        host: '${HOST_2}'
     metrics_path: 'node_exporter'
     basic_auth:
       username: '${NODE_EXPORTER_USER}'
@@ -26,6 +29,9 @@ scrape_configs:
     - targets: ['${HOSTNAME}']
       labels:
         host: '${HOST}'
+    - targets: ['${HOSTNAME_2}']
+      labels:
+        host: '${HOST_2}'
     metrics_path: 'cadvisor/metrics'
     basic_auth:
       username: '${CADVISOR_USER}'

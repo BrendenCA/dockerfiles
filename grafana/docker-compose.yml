@@ -22,6 +22,8 @@ services:
       - NODE_EXPORTER_PASS
       - CADVISOR_USER
       - CADVISOR_PASS
+      - HOST_2
+      - HOSTNAME_2
     volumes:
       - ./config/prometheus.yml:/etc/prometheus/prometheus.env.yml:ro
       - ../data/prometheus:/prometheus

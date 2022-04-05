@@ -36,11 +36,11 @@ services:
     container_name: loki
     volumes:
       - ../data/loki:/loki
-      - ./config:/etc/loki
+      - ./config/loki.yml:/etc/loki/loki.yml:ro
     expose:
       - 3100
     restart: unless-stopped
-    command: -config.file=/etc/loki/loki-config.yml
+    command: -config.file=/etc/loki/loki.yml
     networks:
       - loki
       - core
@@ -58,7 +58,7 @@ services:
     container_name: grafana
     volumes:
       - ../data/grafana:/var/lib/grafana
-      - ./config:/etc/grafana
+      - ./config/grafana.ini:/etc/grafana/grafana.ini:ro
     environment:
       - GF_SERVER_DOMAIN=${HOSTNAME}
       - GF_SERVER_ROOT_URL=${ROOTURL}

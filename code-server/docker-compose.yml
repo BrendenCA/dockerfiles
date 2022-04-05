@@ -11,19 +11,19 @@ services:
     expose:
       - 8080
     volumes:
-      - '$HOME/.config/code-server:/home/coder/.config/code-server'
-      - '$PWD/../:/home/coder/project'
-      - '$HOME/.gitconfig:/home/coder/.gitconfig'
-      - '$HOME/.git-credentials:/home/coder/.git-credentials'
+      - '${HOME}/.config/code-server:/home/coder/.config/code-server'
+      - '${PWD}/../:/home/coder/project'
+      - '${HOME}/.gitconfig:/home/coder/.gitconfig'
+      - '${HOME}/.git-credentials:/home/coder/.git-credentials'
     environment:
-      - DOCKER_USER=$USER
+      - DOCKER_USER=${USER}
       - TZ
     networks:
       - core
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.code-server.entrypoints=websecure"
-      - "traefik.http.routers.code-server.rule=Host(`$HOSTNAME`) && PathPrefix(`/code`)"
+      - "traefik.http.routers.code-server.rule=Host(`${HOSTNAME}`) && PathPrefix(`/code`)"
       - "traefik.http.services.code-server.loadbalancer.server.port=8080"
       - "traefik.http.routers.code-server.middlewares=authelia@docker,code-server-stripprefix"
       - "traefik.http.middlewares.code-server-stripprefix.stripprefix.prefixes=/code"

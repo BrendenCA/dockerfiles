@@ -48,10 +48,10 @@ services:
       - "traefik.enable=true"
       - "traefik.docker.network=core"
       - "traefik.http.routers.loki.entrypoints=websecure"
-      - "traefik.http.routers.loki.rule=Host(`$HOSTNAME`) && PathPrefix(`/loki`)"
+      - "traefik.http.routers.loki.rule=Host(`${HOSTNAME}`) && PathPrefix(`/loki`)"
       - "traefik.http.routers.loki.middlewares=loki"
       - "traefik.http.services.loki.loadbalancer.server.port=3100"
-      - "traefik.http.middlewares.loki.basicauth.users=$LOKI_AUTH"
+      - "traefik.http.middlewares.loki.basicauth.users=${LOKI_AUTH}"
 
   grafana:
     image: grafana/grafana:latest
@@ -60,8 +60,8 @@ services:
       - ../data/grafana:/var/lib/grafana
       - ./config:/etc/grafana
     environment:
-      - GF_SERVER_DOMAIN=$HOSTNAME
-      - GF_SERVER_ROOT_URL=$ROOTURL
+      - GF_SERVER_DOMAIN=${HOSTNAME}
+      - GF_SERVER_ROOT_URL=${ROOTURL}
     expose:
       - 3000
     restart: unless-stopped
@@ -72,6 +72,6 @@ services:
       - "traefik.enable=true"
       - "traefik.docker.network=core"
       - "traefik.http.routers.grafana.entrypoints=websecure"
-      - "traefik.http.routers.grafana.rule=Host(`$HOSTNAME`) && PathPrefix(`/grafana`)"
+      - "traefik.http.routers.grafana.rule=Host(`${HOSTNAME}`) && PathPrefix(`/grafana`)"
       - "traefik.http.services.grafana.loadbalancer.server.port=3000"
       - "traefik.http.routers.grafana.middlewares=authelia@docker"

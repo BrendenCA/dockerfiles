@@ -1,0 +1,22 @@
+version: "3"
+
+services:
+  volume-backup:
+    image: ghcr.io/brendenca/docker-volume-backup:latest
+    container_name: volume-backup
+    environment:
+      - AWS_ACCESS_KEY_ID
+      - AWS_SECRET_ACCESS_KEY
+      - RESTIC_REPOSITORY
+      - RESTIC_PASSWORD
+      - RESTIC_CACHE_DIR
+      - RESTIC_HOST
+      - TZ
+    volumes:
+      - ../data:/data:ro
+      - ./config/backup.yml:/config/backup.yml:ro
+      - ${HOME}/.cache/restic:/cache
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    restart: 'no'
+    entrypoint: ['/app/entrypoint.sh']
+    # command: init

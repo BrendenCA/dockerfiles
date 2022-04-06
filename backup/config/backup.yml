@@ -1,0 +1,31 @@
+- container_name: 'traefik'
+  volume_path: 'traefik'
+  shutdown_required: false
+
+- container_name: 'wireguard'
+  volume_path: 'wireguard'
+  shutdown_required: false
+
+- container_name: 'authelia'
+  volume_path: 'authelia'
+  shutdown_required: false
+
+- container_name: 'redis'
+  volume_path: 'redis'
+  shutdown_required: true
+
+- container_name: 'prometheus'
+  volume_path: 'prometheus'
+  shutdown_required: true
+
+- container_name: 'loki'
+  volume_path: 'loki'
+  shutdown_required: true
+
+- container_name: 'promtail'
+  volume_path: 'promtail'
+  shutdown_required: true
+
+- container_name: 'grafana'
+  volume_path: 'grafana'
+  shutdown_required: true

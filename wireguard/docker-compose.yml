@@ -1,0 +1,18 @@
+version: "3"
+
+services:
+  wireguard:
+    image: lscr.io/linuxserver/wireguard
+    container_name: wireguard
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ
+    volumes:
+      - ../data/wireguard/wg0.conf:/config/wg0.conf:ro
+      - /lib/modules:/lib/modules
+    network_mode: host
+    restart: unless-stopped

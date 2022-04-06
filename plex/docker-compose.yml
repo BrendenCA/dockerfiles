@@ -1,0 +1,91 @@
+version: "3"
+
+networks:
+  core:
+    external: true
+  plex:
+    name: plex
+
+services:
+  rclone:
+    image: rclone/rclone
+    container_name: rclone
+    networks:
+      - core
+      - plex
+    volumes:
+      - type: bind
+        source: ../remotes
+        target: /mnt
+        bind:
+          propagation: shared
+      - ../data/rclone:/config/rclone:ro
+    cap_add:
+      - SYS_ADMIN
+    security_opt:
+      - apparmor:unconfined
+    devices:
+      - /dev/fuse
+    command:
+      - mount
+      - ${RCLONE_REMOTE_PATH}
+      - ${RCLONE_LOCAL_PATH}
+      - --read-only
+      - --allow-other
+      - --dir-cache-time=999h
+      - --vfs-cache-mode=full
+      - --vfs-read-ahead=32M
+      - --use-server-modtime
+      - --rc
+      - --rc-addr=:5572
+    healthcheck:
+      test: ls ${RCLONE_HEALTHCHECK_PATH} || exit 1
+      interval: 1m
+      timeout: 15s
+      retries: 3
+      start_period: 15s
+    restart: unless-stopped
+
+  plex:
+    image: plexinc/pms-docker:public
+    container_name: plex
+    networks:
+      - core
+      - plex
+    expose:
+      - 32400
+    volumes:
+      - type: bind
+        source: ../remotes
+        target: /mnt
+        read_only: true
+        bind:
+          propagation: slave
+      - ../data/plex:/config
+    environment:
+      - TZ
+    depends_on:
+      - rclone
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=core"
+      - "traefik.http.routers.plex.entrypoints=websecure"
+      - "traefik.http.routers.plex.rule=Host(${PLEX_HOSTNAMES})"
+      - "traefik.http.services.plex.loadbalancer.server.port=32400"
+    restart: unless-stopped
+
+  pylisten:
+    build: ./pylisten
+    container_name: plex-pylisten
+    networks:
+      - plex
+    environment:
+      - AWS_ACCESS_KEY_ID
+      - AWS_SECRET_ACCESS_KEY
+      - PLEX_TOKEN
+      - QUEUE_URL
+      - PYTHONUNBUFFERED=1
+    depends_on:
+      - rclone
+      - plex
+    restart: unless-stopped

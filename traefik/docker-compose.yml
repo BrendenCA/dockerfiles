@@ -1,0 +1,34 @@
+version: "3"
+
+networks:
+# docker network create core
+  core:
+    external: true
+
+services:
+  traefik:
+    image: traefik:latest
+    container_name: traefik
+    networks:
+      - core
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./config/traefik.yml:/etc/traefik/traefik.yml:ro
+      - ../data/traefik-certs:/etc/traefik-certs
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      - TRAEFIK_CERTIFICATESRESOLVERS_letsencrypt_ACME_EMAIL=${CERT_EMAIL}
+    extra_hosts:
+      - '${AUTHELIA_HOST}:10.13.13.1'
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.api.rule=Host(`${HOSTNAME}`)'
+      - 'traefik.http.routers.api.entrypoints=websecure'
+      - 'traefik.http.routers.api.service=api@internal'
+      - 'traefik.http.routers.api.middlewares=authelia@docker'
+      - 'traefik.http.middlewares.authelia.forwardauth.address=http://${AUTHELIA_HOST}:9091/api/verify?rd=https://${AUTHELIA_HOSTNAME}/auth/'
+      - 'traefik.http.middlewares.authelia.forwardauth.trustForwardHeader=true'
+      - 'traefik.http.middlewares.authelia.forwardauth.authResponseHeaders=Remote-User,Remote-Groups,Remote-Name,Remote-Email'
+    restart: unless-stopped

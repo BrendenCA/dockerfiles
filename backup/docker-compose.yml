@@ -18,5 +18,4 @@ services:
       - ${HOME}/.cache/restic:/cache
       - /var/run/docker.sock:/var/run/docker.sock:ro
     restart: 'no'
-    entrypoint: ['/app/entrypoint.sh']
     # command: init

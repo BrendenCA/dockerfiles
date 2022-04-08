@@ -2,7 +2,7 @@ version: "3"
 
 services:
   volume-backup:
-    image: ghcr.io/brendenca/docker-volume-backup:latest
+    image: ghcr.io/brendenca/docker-volume-backup:v1.0.8
     container_name: volume-backup
     environment:
       - AWS_ACCESS_KEY_ID
@@ -14,6 +14,7 @@ services:
       - TZ
     volumes:
       - ../data:/data:ro
+      - ../.env:/.env:ro
       - ./config/backup.yml:/config/backup.yml:ro
       - ${HOME}/.cache/restic:/cache
       - /var/run/docker.sock:/var/run/docker.sock:ro

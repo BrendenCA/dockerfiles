@@ -16,14 +16,14 @@ services:
     networks:
       - loki
     environment:
-      - HOST
-      - HOSTNAME
+      - PROMETHEUS_CL_HOST_1
+      - PROMETHEUS_CL_HOSTNAME_1
+      - PROMETHEUS_CL_HOST_2
+      - PROMETHEUS_CL_HOSTNAME_2
       - NODE_EXPORTER_USER
       - NODE_EXPORTER_PASS
       - CADVISOR_USER
       - CADVISOR_PASS
-      - HOST_2
-      - HOSTNAME_2
     volumes:
       - ./config/prometheus.yml:/etc/prometheus/prometheus.env.yml:ro
       - ../data/prometheus:/prometheus
@@ -62,8 +62,8 @@ services:
       - ../data/grafana:/var/lib/grafana
       - ./config/grafana.ini:/etc/grafana/grafana.ini:ro
     environment:
-      - GF_SERVER_DOMAIN=${HOSTNAME}
-      - GF_SERVER_ROOT_URL=${ROOTURL}
+      - GF_SERVER_DOMAIN
+      - GF_SERVER_ROOT_URL
     expose:
       - 3000
     restart: unless-stopped

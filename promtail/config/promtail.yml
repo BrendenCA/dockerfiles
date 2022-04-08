@@ -5,7 +5,7 @@ positions:
   filename: /promtail/positions.yaml
 
 clients:
-  - url: ${CLIENT_URL}
+  - url: ${PROMTAIL_LOKI_CLIENT_URL}
     external_labels:
       host: ${HOST}
 

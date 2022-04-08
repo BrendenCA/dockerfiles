@@ -7,17 +7,17 @@ scrape_configs:
     static_configs:
     - targets: ['localhost:9090']
       labels:
-        host: '${HOST}'
+        host: '${PROMETHEUS_CL_HOST_1}'
 
   - job_name: 'node'
     scheme: https
     static_configs:
-    - targets: ['${HOSTNAME}']
+    - targets: ['${PROMETHEUS_CL_HOSTNAME_1}']
       labels:
-        host: '${HOST}'
-    - targets: ['${HOSTNAME_2}']
+        host: '${PROMETHEUS_CL_HOST_1}'
+    - targets: ['${PROMETHEUS_CL_HOSTNAME_2}']
       labels:
-        host: '${HOST_2}'
+        host: '${PROMETHEUS_CL_HOST_2}'
     metrics_path: 'node_exporter'
     basic_auth:
       username: '${NODE_EXPORTER_USER}'
@@ -26,12 +26,12 @@ scrape_configs:
   - job_name: 'cadvisor'
     scheme: https
     static_configs:
-    - targets: ['${HOSTNAME}']
+    - targets: ['${PROMETHEUS_CL_HOSTNAME_1}']
       labels:
-        host: '${HOST}'
-    - targets: ['${HOSTNAME_2}']
+        host: '${PROMETHEUS_CL_HOST_1}'
+    - targets: ['${PROMETHEUS_CL_HOSTNAME_2}']
       labels:
-        host: '${HOST_2}'
+        host: '${PROMETHEUS_CL_HOST_2}'
     metrics_path: 'cadvisor/metrics'
     basic_auth:
       username: '${CADVISOR_USER}'

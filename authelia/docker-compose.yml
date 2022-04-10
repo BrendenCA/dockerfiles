@@ -32,9 +32,9 @@ services:
     labels:
       - 'traefik.enable=true'
       - 'traefik.docker.network=core'
-      - 'traefik.http.routers.authelia.rule=Host(`${HOSTNAME}`) && PathPrefix(`/auth`)'
+      - 'traefik.http.routers.authelia.rule=Host(`${AUTHELIA_HOSTNAME}`)'
       - 'traefik.http.routers.authelia.entrypoints=websecure'
-      - 'traefik.http.middlewares.authelia.forwardauth.address=http://authelia:9091/api/verify?rd=https://${HOSTNAME}/auth/'
+      - 'traefik.http.middlewares.authelia.forwardauth.address=http://authelia:9091/api/verify?rd=https://${AUTHELIA_HOSTNAME}'
       - 'traefik.http.middlewares.authelia.forwardauth.trustForwardHeader=true'
       - 'traefik.http.middlewares.authelia.forwardauth.authResponseHeaders=Remote-User,Remote-Groups,Remote-Name,Remote-Email'
     ports:

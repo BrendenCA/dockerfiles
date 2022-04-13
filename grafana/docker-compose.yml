@@ -56,7 +56,7 @@ services:
       - "traefik.http.middlewares.loki.basicauth.users=${LOKI_AUTH}"
 
   grafana:
-    image: grafana/grafana:latest
+    image: grafana/grafana:8.4.6
     container_name: grafana
     volumes:
       - ../data/grafana:/var/lib/grafana

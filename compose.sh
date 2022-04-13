@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 
 ENV_FILE=".env"
+NETWORKS=(
+    "core"
+    "loki"
+)
 SERVICES=(
     "traefik"
     "authelia"
@@ -15,6 +19,11 @@ if [ -z "$1" ]; then
     echo "Usage: $0 up|down|ps"
     exit 1
 fi
+
+for NETWORK in ${NETWORKS[@]}; do
+    echo "Running: docker network create $NETWORK"
+    docker network create $NETWORK
+done
 
 command=""
 if [ "$1" == "up" ]; then

@@ -12,6 +12,7 @@ SERVICES=(
     "promtail"
     "wireguard"
     "backup"
+    "brenden.me"
     #"code-server"
 )
 

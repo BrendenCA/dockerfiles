@@ -1,0 +1,20 @@
+version: '3.3'
+
+networks:
+  core:
+    external: true
+
+services:
+  resume-web:
+    image: ghcr.io/brendenca/brenden.me:v0.0.1
+    container_name: resume-web
+    expose:
+      - 80
+    networks:
+      - core
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.resume-web.entrypoints=websecure"
+      - "traefik.http.routers.resume-web.rule=Host(`${HOSTNAME_RESUME}`)"
+      - "traefik.http.services.resume-web.loadbalancer.server.port=80"
+    restart: unless-stopped

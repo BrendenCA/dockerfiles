@@ -22,6 +22,7 @@ services:
       - TRAEFIK_CERTIFICATESRESOLVERS_letsencrypt_ACME_EMAIL=${CERT_EMAIL}
     extra_hosts:
       - '${AUTHELIA_HOST}:10.13.13.1'
+      - 'host.docker.internal:host-gateway'
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.api.rule=Host(`${HOSTNAME}`)'

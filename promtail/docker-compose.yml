@@ -25,14 +25,15 @@ services:
     command:
       - '--path.rootfs=/host'
       - '--web.telemetry-path=/node_exporter'
+      - '--collector.netdev.device-exclude=^(veth|br-).*$$'
+      - '--collector.netclass.ignored-devices=^(veth|br-).*$$'
     pid: host
     restart: unless-stopped
     volumes:
       - '/:/host:ro,rslave'
-    expose:
-      - 9100
-    networks:
-      - core
+    ports:
+      - 9100:9100
+    network_mode: host
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.node_exporter.entrypoints=websecure"

@@ -14,7 +14,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - /var/log:/var/log:ro
     environment:
-      - CLIENT_URL
+      - PROMTAIL_LOKI_CLIENT_URL
       - HOST
     restart: unless-stopped
     command: -config.file=/etc/promtail/promtail.yml -config.expand-env=true

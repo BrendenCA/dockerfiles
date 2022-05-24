@@ -20,6 +20,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     environment:
       - TRAEFIK_CERTIFICATESRESOLVERS_letsencrypt_ACME_EMAIL=${CERT_EMAIL}
+      - CF_DNS_API_TOKEN
     extra_hosts:
       - '${AUTHELIA_HOST}:10.13.13.1'
       - 'host.docker.internal:host-gateway'

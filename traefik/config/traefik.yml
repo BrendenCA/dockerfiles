@@ -30,8 +30,9 @@ certificatesResolvers:
     acme:
       storage: /etc/traefik-certs/acme.json
       caServer: "https://acme-v02.api.letsencrypt.org/directory"
-      httpChallenge:
-        entryPoint: web
+      dnsChallenge:
+        provider: cloudflare
+        delayBeforeCheck: 0
 
 providers:
   docker:

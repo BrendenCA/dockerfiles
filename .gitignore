@@ -1,3 +1,5 @@
 data/*
 remotes/*
 .env
+
+!.gitkeep

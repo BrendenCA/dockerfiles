@@ -1,0 +1,72 @@
+version: "3"
+
+networks:
+  core:
+    external: true
+
+services:
+  promtail:
+    image: grafana/promtail:main
+    container_name: promtail
+    volumes:
+      - ../data/promtail:/promtail
+      - ./config/promtail.yml:/etc/promtail/promtail.yml:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /var/log:/var/log:ro
+    environment:
+      - PROMTAIL_LOKI_CLIENT_URL
+      - HOST
+    restart: unless-stopped
+    command: -config.file=/etc/promtail/promtail.yml -config.expand-env=true
+
+  node_exporter:
+    image: quay.io/prometheus/node-exporter:latest
+    container_name: node_exporter
+    command:
+      - '--path.rootfs=/host'
+      - '--web.telemetry-path=/node_exporter'
+      - '--collector.netdev.device-exclude=^(veth|br-).*$$'
+      - '--collector.netclass.ignored-devices=^(veth|br-).*$$'
+    pid: host
+    restart: unless-stopped
+    volumes:
+      - '/:/host:ro,rslave'
+    ports:
+      - 9100:9100
+    network_mode: host
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.node_exporter.entrypoints=websecure"
+      - "traefik.http.routers.node_exporter.rule=Host(`${HOSTNAME}`) && PathPrefix(`/node_exporter`)"
+      - "traefik.http.routers.node_exporter.middlewares=node_exporter"
+      - "traefik.http.services.node_exporter.loadbalancer.server.port=9100"
+      - "traefik.http.middlewares.node_exporter.basicauth.users=${NODE_EXPORTER_AUTH}"
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:latest
+    container_name: cadvisor
+    command:
+      - '-url_base_prefix=/cadvisor'
+    expose:
+      - 8080
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    privileged: true
+    devices:
+      - /dev/kmsg
+    healthcheck:
+      disable: true
+    restart: unless-stopped
+    networks:
+      - core
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.cadvisor.entrypoints=websecure"
+      - "traefik.http.routers.cadvisor.rule=Host(`${HOSTNAME}`) && PathPrefix(`/cadvisor`)"
+      - "traefik.http.routers.cadvisor.middlewares=cadvisor"
+      - "traefik.http.services.cadvisor.loadbalancer.server.port=8080"
+      - "traefik.http.middlewares.cadvisor.basicauth.users=${CADVISOR_AUTH}"

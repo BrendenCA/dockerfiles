@@ -1,0 +1,69 @@
+version: "3"
+
+networks:
+  rclone:
+    external: true
+
+services:
+  rclone:
+    image: rclone/rclone
+    container_name: rclone
+    networks:
+      - rclone
+    volumes:
+      - type: bind
+        source: /mnt
+        target: /mnt
+        bind:
+          propagation: shared
+      - ../data/rclone:/config/rclone
+    cap_add:
+      - SYS_ADMIN
+    security_opt:
+      - apparmor:unconfined
+    devices:
+      - /dev/fuse
+    command:
+      - mount
+      - ${RCLONE_REMOTE_PATH}
+      - ${RCLONE_MOUNT_PATH}
+      - --allow-other
+      - --dir-cache-time=999h
+      - --use-server-modtime
+      - --rc
+      - --rc-addr=:5572
+    healthcheck:
+      test: ls ${RCLONE_HEALTHCHECK_PATH} || exit 1
+      interval: 1m
+      timeout: 15s
+      retries: 3
+      start_period: 15s
+    restart: unless-stopped
+
+  mergerfs:
+    image: hotio/mergerfs:release
+    container_name: mergerfs
+    network_mode: none
+    volumes:
+      - type: bind
+        source: /mnt
+        target: /mnt
+        bind:
+          propagation: shared
+    cap_add:
+      - SYS_ADMIN
+    security_opt:
+      - apparmor:unconfined
+    devices:
+      - /dev/fuse
+    command:
+      - -odefaults,allow_other,direct_io,category.create=ff
+      - ${MERGERFS_LOCAL_PATH}:${RCLONE_MOUNT_PATH}
+      - ${MERGERFS_MOUNT_PATH}
+    healthcheck:
+      test: ls ${MERGERFS_HEALTHCHECK_PATH} || exit 1
+      interval: 1m
+      timeout: 15s
+      retries: 3
+      start_period: 15s
+    restart: unless-stopped

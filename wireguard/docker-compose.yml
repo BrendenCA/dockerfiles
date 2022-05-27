@@ -12,7 +12,7 @@ services:
       - PGID=1000
       - TZ
       - SERVERURL=${HOSTNAME}
-      - SERVERPORT
+      - SERVERPORT  # Issue: Manually change port
       - PEERS
       - PEERDNS
       - INTERNAL_SUBNET

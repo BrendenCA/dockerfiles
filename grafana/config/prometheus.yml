@@ -18,6 +18,9 @@ scrape_configs:
     - targets: ['${PROMETHEUS_CL_HOSTNAME_2}']
       labels:
         host: '${PROMETHEUS_CL_HOST_2}'
+    - targets: ['${PROMETHEUS_CL_HOSTNAME_3}']
+      labels:
+        host: '${PROMETHEUS_CL_HOST_3}'
     metrics_path: 'node_exporter'
     basic_auth:
       username: '${NODE_EXPORTER_USER}'
@@ -32,6 +35,9 @@ scrape_configs:
     - targets: ['${PROMETHEUS_CL_HOSTNAME_2}']
       labels:
         host: '${PROMETHEUS_CL_HOST_2}'
+    - targets: ['${PROMETHEUS_CL_HOSTNAME_3}']
+      labels:
+        host: '${PROMETHEUS_CL_HOST_3}'
     metrics_path: 'cadvisor/metrics'
     basic_auth:
       username: '${CADVISOR_USER}'

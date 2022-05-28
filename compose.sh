@@ -9,6 +9,7 @@ NETWORKS=(
 SERVICES=(
     "rclone"
     "nzbhydra"
+    "sonarr"
     "promtail"
     "traefik"
     "wireguard"

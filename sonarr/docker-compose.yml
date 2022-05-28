@@ -1,0 +1,62 @@
+version: "3"
+
+networks:
+  core:
+    external: true
+  nzb:
+    external: true
+
+services:
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:latest
+    container_name: sonarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+    networks:
+      - core
+      - nzb
+    volumes:
+      - ../data/sonarr:/config
+      - type: bind
+        source: /mnt
+        target: /mnt
+        bind:
+          propagation: slave
+    expose:
+      - 8989
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=core"
+      - "traefik.http.routers.sonarr.entrypoints=websecure"
+      - "traefik.http.routers.sonarr.rule=Host(`${HOSTNAME}`) && PathPrefix(`/sonarr`)"
+      - "traefik.http.services.sonarr.loadbalancer.server.port=8989"
+      - "traefik.http.routers.sonarr.middlewares=authelia@docker"
+
+  sonarr4k:
+    image: lscr.io/linuxserver/sonarr:latest
+    container_name: sonarr4k
+    environment:
+      - PUID=1000
+      - PGID=1000
+    networks:
+      - core
+      - nzb
+    volumes:
+      - ../data/sonarr4k:/config
+      - type: bind
+        source: /mnt
+        target: /mnt
+        bind:
+          propagation: slave
+    expose:
+      - 8989
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=core"
+      - "traefik.http.routers.sonarr4k.entrypoints=websecure"
+      - "traefik.http.routers.sonarr4k.rule=Host(`${HOSTNAME}`) && PathPrefix(`/sonarr4k`)"
+      - "traefik.http.services.sonarr4k.loadbalancer.server.port=8989"
+      - "traefik.http.routers.sonarr4k.middlewares=authelia@docker"

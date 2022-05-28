@@ -1,0 +1,31 @@
+version: "3"
+
+networks:
+  core:
+    external: true
+  nzb:
+    external: true
+
+services:
+  nzbhydra:
+    image: lscr.io/linuxserver/nzbhydra2:latest
+    container_name: nzbhydra
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ
+    networks:
+      - core
+      - nzb
+    volumes:
+      - ../data/nzbhydra:/config
+    expose:
+      - 5076
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=core"
+      - "traefik.http.routers.nzbhydra.entrypoints=websecure"
+      - "traefik.http.routers.nzbhydra.rule=Host(`${HOSTNAME}`) && PathPrefix(`/nzbhydra`)"
+      - "traefik.http.services.nzbhydra.loadbalancer.server.port=5076"
+      - "traefik.http.routers.nzbhydra.middlewares=authelia@docker"

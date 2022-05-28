@@ -4,9 +4,11 @@ ENV_FILE=".env"
 NETWORKS=(
     "core"
     "rclone"
+    "nzb"
 )
 SERVICES=(
     "rclone"
+    "nzbhydra"
     "promtail"
     "traefik"
     "wireguard"

@@ -10,6 +10,9 @@ services:
     container_name: rclone
     networks:
       - rclone
+    environment:
+      - AWS_ACCESS_KEY_ID
+      - AWS_SECRET_ACCESS_KEY
     volumes:
       - type: bind
         source: /mnt
@@ -31,7 +34,7 @@ services:
       - --dir-cache-time=999h
       - --use-server-modtime
       - --rc
-      - --rc-addr=:5572
+      - --rc-addr=:${RCLONE_RC_PORT}
     healthcheck:
       test: ls ${RCLONE_HEALTHCHECK_PATH} || exit 1
       interval: 1m

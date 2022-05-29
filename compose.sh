@@ -8,6 +8,7 @@ NETWORKS=(
 )
 SERVICES=(
     "rclone"
+    "nzbget"
     "nzbhydra"
     "sonarr"
     "promtail"

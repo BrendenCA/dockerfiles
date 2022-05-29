@@ -1,0 +1,38 @@
+version: "3"
+
+networks:
+  core:
+    external: true
+  nzb:
+    external: true
+
+services:
+  nzbget:
+    build: ./nzbget
+    container_name: nzbget
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ
+    networks:
+      - core
+      - nzb
+    volumes:
+      - ../data/nzbget/config:/config
+      - ../data/nzbget/downloads:/downloads
+      - type: bind
+        source: /mnt/lmnt
+        target: /mnt/lmnt
+        bind:
+          propagation: slave
+    expose:
+      - 6789
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=core"
+      - "traefik.http.routers.nzbget.entrypoints=websecure"
+      - "traefik.http.routers.nzbget.rule=Host(`${HOSTNAME}`) && PathPrefix(`/nzbget/`)"
+      - "traefik.http.services.nzbget.loadbalancer.server.port=6789"
+      - "traefik.http.routers.nzbget.middlewares=authelia@docker,nzbget-stripprefix"
+      - "traefik.http.middlewares.nzbget-stripprefix.stripprefix.prefixes=/nzbget"

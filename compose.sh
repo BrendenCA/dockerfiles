@@ -11,6 +11,7 @@ SERVICES=(
     "nzbget"
     "nzbhydra"
     "sonarr"
+    "uploader"
     "promtail"
     "traefik"
     "wireguard"

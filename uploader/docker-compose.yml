@@ -1,0 +1,34 @@
+version: "3"
+
+networks:
+  rclone:
+    external: true
+  nzb:
+    external: true
+
+services:
+  uploader:
+    build: ./uploader
+    container_name: uploader
+    networks:
+      - rclone
+      - nzb
+    environment:
+      - UPLOADER_SNS_TOPIC_URL
+      - UPLOADER_S3_BASE_PATH
+      - UPLOADER_LOCAL_PATH
+      - UPLOADER_REMOTE_PATH
+      - UPLOADER_MOUNT_PATH
+      - RCLONE_RC_ENDPOINT
+      - AWS_ACCESS_KEY_ID
+      - AWS_SECRET_ACCESS_KEY
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - type: bind
+        source: /mnt
+        target: /mnt
+        bind:
+          propagation: slave
+    expose:
+      - 80
+    restart: unless-stopped

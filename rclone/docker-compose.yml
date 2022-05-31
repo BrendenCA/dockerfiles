@@ -6,7 +6,7 @@ networks:
 
 services:
   rclone:
-    image: rclone/rclone
+    image: rclone/rclone:beta
     container_name: rclone
     networks:
       - rclone
@@ -18,7 +18,7 @@ services:
         source: /mnt
         target: /mnt
         bind:
-          propagation: shared
+          propagation: rshared
       - ../data/rclone:/config/rclone
     cap_add:
       - SYS_ADMIN
@@ -31,10 +31,14 @@ services:
       - ${RCLONE_REMOTE_PATH}
       - ${RCLONE_MOUNT_PATH}
       - --allow-other
+      - --umask=000
       - --dir-cache-time=999h
+      - --fast-list
       - --use-server-modtime
       - --rc
+      - --rc-no-auth
       - --rc-addr=:${RCLONE_RC_PORT}
+      - --s3-chunk-size=256M
     healthcheck:
       test: ls ${RCLONE_HEALTHCHECK_PATH} || exit 1
       interval: 1m
@@ -52,7 +56,7 @@ services:
         source: /mnt
         target: /mnt
         bind:
-          propagation: shared
+          propagation: rshared
     cap_add:
       - SYS_ADMIN
     security_opt:
@@ -60,7 +64,7 @@ services:
     devices:
       - /dev/fuse
     command:
-      - -odefaults,allow_other,direct_io,category.create=ff
+      - -odefaults,allow_other,umask=000,direct_io,category.create=ff
       - ${MERGERFS_LOCAL_PATH}:${RCLONE_MOUNT_PATH}
       - ${MERGERFS_MOUNT_PATH}
     healthcheck:

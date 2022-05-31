@@ -30,7 +30,7 @@ def upload(eppath, root):
     for remote in remotes:
         url = RCLONE_RC_ENDPOINT + 'operations/copyfile'
         reqObj = {}
-        reqObj['srcFs'] = "local:"
+        reqObj['srcFs'] = "/"
         reqObj['srcRemote'] = root + eppath
         reqObj['dstFs'] = remote['fs']
         reqObj['dstRemote'] = eppath

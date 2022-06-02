@@ -62,19 +62,24 @@ def upload(eppath, root):
 @app.route("/upload", methods=['POST'])
 def client_pushed():
     payload = request.get_json(silent=True)
-    if payload['eventType'] == "Download":  # Sonarr
+    if payload['eventType'] == "Test":
+        logging.info("Received test payload: {}", payload)
+    elif payload['eventType'] == "Download" and 'series' in payload:  # Sonarr
         temppath = payload['series']['path']
         if temppath[-1] == '/':
             temppath = temppath[:-1]
         temppath = os.path.basename(os.path.dirname(temppath)) + '/' + os.path.basename(temppath)
-        checkpath = MOUNT_PATH + temppath + "/" + os.path.dirname(payload['episodeFile']['relativePath'])
-        if not os.path.isdir(checkpath):
-            logging.info("Creating path " + checkpath)
-            os.makedirs(checkpath)
+        # checkpath = MOUNT_PATH + temppath + "/" + os.path.dirname(payload['episodeFile']['relativePath'])
+        # if not os.path.isdir(checkpath):
+        #     logging.info("Creating path " + checkpath)
+        #     os.makedirs(checkpath)
         recvpath = temppath + '/' + payload['episodeFile']['relativePath']
         executor.submit(upload, recvpath, LOCAL_PATH)
-    else:
-        executor.submit(upload, payload['file'], LOCAL_PATH + "completed/")
+    elif payload['eventType'] == "Download" and 'movie' in payload:  # Radarr
+        folderPath = payload['movie']['folderPath']
+        relFolderPath = '/'.join(folderPath.split('/')[3:])
+        recvName = os.listdir(LOCAL_PATH + relFolderPath)[0]
+        executor.submit(upload, relFolderPath + '/' + recvName, LOCAL_PATH)
     return "OK"
 
 if __name__ == "__main__":

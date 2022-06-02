@@ -1,0 +1,23 @@
+version: '3.3'
+
+networks:
+  core:
+    external: true
+
+services:
+  uptime-kuma:
+    image: louislam/uptime-kuma:latest
+    container_name: uptime-kuma
+    expose:
+      - 3001
+    volumes:
+      - ../data/uptime-kuma:/app/data
+    networks:
+      - core
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.uptime-kuma.entrypoints=websecure"
+      - "traefik.http.routers.uptime-kuma.rule=Host(`${HOSTNAME_UPTIME_KUMA}`)"
+      - "traefik.http.services.uptime-kuma.loadbalancer.server.port=3001"
+      # - "traefik.http.routers.uptime-kuma.middlewares=authelia@docker"
+    restart: unless-stopped

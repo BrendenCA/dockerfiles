@@ -13,6 +13,7 @@ SERVICES=(
     "wireguard"
     "backup"
     "brenden.me"
+    "uptime-kuma"
     #"code-server"
 )
 

@@ -23,6 +23,13 @@ authentication_backend:
 access_control:
   default_policy: one_factor
 
+  rules:
+    - domain_regex: '^.*$'
+      networks:
+      - 10.13.13.1/32 # WG Gateway
+      - 172.21.0.1/32 # Core Gateway
+      policy: bypass
+
 session:
   name: auth_token
   expiration: 3600  # 1 hour

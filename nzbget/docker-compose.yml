@@ -20,6 +20,7 @@ services:
     volumes:
       - ../data/nzbget/config:/config
       - ../data/nzbget/downloads:/downloads
+      - ./scripts:/scripts:ro
       - type: bind
         source: /mnt/lmnt
         target: /mnt/lmnt

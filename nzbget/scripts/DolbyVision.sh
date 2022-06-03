@@ -6,7 +6,7 @@
 ##############################################################################
 ### NZBGET POST-PROCESSING SCRIPT                                          ###
 
-# Remuxes MKV Dolby Vision files into MP4
+# Remuxes MKV Dolby Vision, HDR10 files into MP4
 
 ### NZBGET POST-PROCESSING SCRIPT                                          ###
 ##############################################################################
@@ -16,23 +16,15 @@ POSTPROCESS_SUCCESS=93
 POSTPROCESS_ERROR=94
 MIN_FILE_SIZE=`expr 750 \* 1024`k  # 750MB
 
-if [[ $NZBPP_NZBNAME == *".DV."* ]] && [[ $NZBPP_TOTALSTATUS == "SUCCESS" ]]; then
+if [[ $NZBPP_NZBNAME == *".DV."* || $NZBPP_NZBNAME == *".HDR10."* ]] && [[ $NZBPP_TOTALSTATUS == "SUCCESS" ]]; then
   filePath=$(find $NZBPP_DIRECTORY -name '*.mkv' -size +$MIN_FILE_SIZE | head -n 1)
   if [[ $filePath != "" ]]; then
     cd $NZBPP_DIRECTORY
-    echo "[DETAIL] Extracting Video"
-    ffmpeg -hide_banner -loglevel error -i $filePath -c copy video.hevc
-    echo "[DETAIL] Extracting Audio"
-    ffmpeg -hide_banner -loglevel error -i $filePath -c copy audio.eac3
-    rm $filePath
-    mv audio.eac3 audio.ec3
     echo "[DETAIL] Remuxing to mp4"
-    mp4muxer --dv-profile 5 -i video.hevc -i audio.ec3 --media-lang eng -o outputfile.mp4
+    ffmpeg -hide_banner -loglevel error -i $filePath -map 0 -c copy -scodec mov_text -strict unofficial output.mp4
     echo "[DETAIL] Cleaning up"
-    rm video.hevc
-    rm audio.ec3
-    echo "[DETAIL] Renaming output file"
-    mv outputfile.mp4 "${filePath%.*}.mp4"
+    rm $filePath
+    mv output.mp4 "${filePath%.*}.mp4"
   fi
 fi
 exit $POSTPROCESS_SUCCESS

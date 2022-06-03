@@ -34,3 +34,31 @@ services:
       - "traefik.http.routers.radarr.rule=Host(`${HOSTNAME}`) && PathPrefix(`/radarr`)"
       - "traefik.http.services.radarr.loadbalancer.server.port=7878"
       - "traefik.http.routers.radarr.middlewares=authelia@docker"
+
+  radarr4k:
+    image: lscr.io/linuxserver/radarr:latest
+    container_name: radarr4k
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ
+    networks:
+      - core
+      - nzb
+    volumes:
+      - ../data/radarr4k:/config
+      - type: bind
+        source: /mnt
+        target: /mnt
+        bind:
+          propagation: slave
+    expose:
+      - 7878
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=core"
+      - "traefik.http.routers.radarr4k.entrypoints=websecure"
+      - "traefik.http.routers.radarr4k.rule=Host(`${HOSTNAME}`) && PathPrefix(`/radarr4k`)"
+      - "traefik.http.services.radarr4k.loadbalancer.server.port=7878"
+      - "traefik.http.routers.radarr4k.middlewares=authelia@docker"

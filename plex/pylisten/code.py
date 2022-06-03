@@ -64,6 +64,8 @@ while True:
                 type = 'TV'
             if 'Movies/' in path:
                 type = 'Movies'
+            if 'Movies-UHD/' in path:
+                type = 'Movies'
             if 'Scenes/' in path:
                 type = 'Scenes'
 

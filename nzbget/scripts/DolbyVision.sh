@@ -54,25 +54,46 @@ if [[ $NZBPP_NZBNAME == *".DV."* || $NZBPP_NZBNAME == *".HDR10."* ]] && [[ $NZBP
     else
       echo "[DETAIL] Dolby Vision Profile 7"
       echo "[DETAIL] Demuxing mkv to DV Profile 8 HEVC"
-      ffmpeg ${FFMPEG_DEFAULT_LOGGING} -i "${filePath}" -c:v copy -vbsf hevc_mp4toannexb -f hevc - | dovi_tool -m 2 convert --discard - -o BL_RPU.hevc
+      ffmpeg ${FFMPEG_DEFAULT_LOGGING} -i "${filePath}" -c:v copy -vbsf hevc_mp4toannexb -f hevc - | dovi_tool -m 2 --crop convert --discard - -o BL_RPU.hevc
 
-      echo "[DETAIL] Demuxing EAC3 from mkv"
-      ffmpeg ${FFMPEG_DEFAULT_LOGGING} -i "${filePath}" -map 0:a:0 audio.eac3
+      audioStreams=$(ffprobe ${FFMPEG_DEFAULT_LOGGING} -select_streams a -show_entries stream=index,codec_name,channels,:stream_tags=language -of csv=p=0 "${filePath}")
+      hasEac3=$(echo "${audioStreams}" | grep ',eac3,6')
+      hasAc3=$(echo "${audioStreams}" | grep ',ac3,6')
+      audioFileName=""
+      streamLang=$(echo "${audioStreams}" | head -n 1 | cut -d ',' -f 4)
+
+      if [ -n "${hasEac3}" ]; then
+        streamId=$(echo "${hasEac3}" | cut -d ',' -f 1)
+        streamLang=$(echo "${hasEac3}" | cut -d ',' -f 4)
+        echo "[DETAIL] Demuxing (${streamId})EAC3(${streamLang}) from mkv"
+        ffmpeg ${FFMPEG_DEFAULT_LOGGING} -i "${filePath}" -map 0:${streamId} -c copy audio.eac3
+        mv audio.eac3 audio.ec3
+        audioFileName="audio.ec3"
+      elif [ -n "${hasAc3}" ]; then
+        streamId=$(echo "${hasAc3}" | cut -d ',' -f 1)
+        streamLang=$(echo "${hasAc3}" | cut -d ',' -f 4)
+        echo "[DETAIL] Demuxing (${streamId})AC3(${streamLang}) from mkv"
+        ffmpeg ${FFMPEG_DEFAULT_LOGGING} -i "${filePath}" -map 0:${streamId} -c copy audio.ac3
+        audioFileName="audio.ac3"
+      else
+        echo "[DETAIL] Demuxing (Transcode) (0)EAC3(${streamLang}) from mkv"
+        ffmpeg ${FFMPEG_DEFAULT_LOGGING} -i "${filePath}" -map 0:a:0 audio.eac3
+        mv audio.eac3 audio.ec3
+        audioFileName="audio.ec3"
+      fi
+      
       rm "${filePath}"
-      mv audio.eac3 audio.ec3
-
       echo "[DETAIL] Remuxing HEVC, EAC3 to mp4"
-      mp4muxer --dv-profile 8 --dv-bl-compatible-id 1 -i BL_RPU.hevc -i audio.ec3 -o output.mp4
+      mp4muxer --dv-profile 8 --dv-bl-compatible-id 1 -i BL_RPU.hevc -i ${audioFileName} --media-lang ${streamLang} -o output.mp4
 
       if [ $? -eq 0 ]; then
         echo "[DETAIL] Cleaning up"
-        rm BL_RPU.hevc audio.ec3
+        rm BL_RPU.hevc ${audioFileName}
         mv output.mp4 "${filePath%.*}.mp4"
       else
         echo "[ERROR] Remux failed"
         exit $POSTPROCESS_ERROR
       fi
-
     fi
   fi
 fi

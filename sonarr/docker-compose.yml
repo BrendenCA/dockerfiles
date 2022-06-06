@@ -20,8 +20,8 @@ services:
     volumes:
       - ../data/sonarr:/config
       - type: bind
-        source: /mnt
-        target: /mnt
+        source: ${MERGERFS_MOUNT_PATH}
+        target: ${MERGERFS_MOUNT_PATH}
         bind:
           propagation: slave
     expose:
@@ -48,8 +48,8 @@ services:
     volumes:
       - ../data/sonarr4k:/config
       - type: bind
-        source: /mnt
-        target: /mnt
+        source: ${MERGERFS_MOUNT_PATH}
+        target: ${MERGERFS_MOUNT_PATH}
         bind:
           propagation: slave
     expose:

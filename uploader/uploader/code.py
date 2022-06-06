@@ -5,7 +5,6 @@ SNS_TOPIC_URL = os.environ['UPLOADER_SNS_TOPIC_URL']
 S3_BASE_PATH = os.environ['UPLOADER_S3_BASE_PATH']
 LOCAL_PATH = os.environ['UPLOADER_LOCAL_PATH']
 REMOTE_PATH = os.environ['UPLOADER_REMOTE_PATH']
-MOUNT_PATH = os.environ['UPLOADER_MOUNT_PATH']
 REMOTE_PATH_NAME = REMOTE_PATH[:-1]
 RCLONE_RC_ENDPOINT = os.environ['RCLONE_RC_ENDPOINT']
 
@@ -69,10 +68,6 @@ def client_pushed():
         if temppath[-1] == '/':
             temppath = temppath[:-1]
         temppath = os.path.basename(os.path.dirname(temppath)) + '/' + os.path.basename(temppath)
-        # checkpath = MOUNT_PATH + temppath + "/" + os.path.dirname(payload['episodeFile']['relativePath'])
-        # if not os.path.isdir(checkpath):
-        #     logging.info("Creating path " + checkpath)
-        #     os.makedirs(checkpath)
         recvpath = temppath + '/' + payload['episodeFile']['relativePath']
         executor.submit(upload, recvpath, LOCAL_PATH)
     elif payload['eventType'] == "Download" and 'movie' in payload:  # Radarr

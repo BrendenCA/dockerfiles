@@ -84,7 +84,7 @@ if [[ $NZBPP_NZBNAME == *".DV."* || $NZBPP_NZBNAME == *".HDR10."* ]] && [[ $NZBP
       
       rm "${filePath}"
       echo "[DETAIL] Remuxing HEVC, EAC3 to mp4"
-      mp4muxer --dv-profile 8 --dv-bl-compatible-id 1 -i BL_RPU.hevc -i ${audioFileName} --media-lang ${streamLang} -o output.mp4
+      MP4Box -add BL_RPU.hevc:dv-profile=8.hdr10:stype=dvhe+${audioFileName}:lang=${streamLang} -brand mp42isom -ab dby1 -newfs output.mp4 2>/dev/null
 
       if [ $? -eq 0 ]; then
         echo "[DETAIL] Cleaning up"

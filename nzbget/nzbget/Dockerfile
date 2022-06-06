@@ -1,20 +1,22 @@
-FROM alpine:3.14 as buildstage
+FROM alpine:3.15 as buildstage
 RUN \
     echo "**** Install build packages ****" && \
         apk add --no-cache \
             git \
             make \
-            g++ && \
-    echo "**** Clone mp4muxer repo ****" && \
-        git clone "https://github.com/DolbyLaboratories/dlb_mp4base.git" && \
-    echo "**** Build mp4muxer ****" && \
-        cd "/dlb_mp4base/make/mp4muxer/linux_amd64" && \
-        make mp4muxer_release && \
-        mv mp4muxer_release /mp4muxer && \
-        chmod +x /mp4muxer
+            g++ \
+            zlib-dev && \
+    echo "**** Clone gpac repo ****" && \
+        git clone "https://github.com/gpac/gpac.git" && \
+    echo "**** Build gpac ****" && \
+        cd "gpac" && \
+        git checkout "v2.0.0" && \
+        ./configure && \
+        make -j4 && \
+        mv bin/gcc/ /gpac_bin
 
 FROM linuxserver/nzbget:latest
-COPY --from=buildstage /mp4muxer /usr/local/bin/mp4muxer
+COPY --from=buildstage /gpac_bin /gpac_bin
 RUN \
     echo "**** Install ffmpeg ****" && \
         wget https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz && \
@@ -28,4 +30,6 @@ RUN \
         tar xf dovi_tool*.tar.gz && \
         mv ./dovi_tool /usr/local/bin/ && \
         rm -rf dovi_tool*.tar.gz && \
-        chmod +x /usr/local/bin/dovi_tool
+        chmod +x /usr/local/bin/dovi_tool && \
+    echo "**** Install MP4Box ****" && \
+        ln -s /gpac_bin/MP4Box /usr/local/bin/MP4Box

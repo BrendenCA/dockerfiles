@@ -1,0 +1,31 @@
+version: "3"
+
+networks:
+  core:
+    external: true
+  nzb:
+    external: true
+
+services:
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:develop
+    container_name: prowlarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ
+    networks:
+      - core
+      - nzb
+    volumes:
+      - ../data/prowlarr:/config
+    expose:
+      - 9696
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=core"
+      - "traefik.http.routers.prowlarr.entrypoints=websecure"
+      - "traefik.http.routers.prowlarr.rule=Host(`${HOSTNAME}`) && PathPrefix(`/prowlarr`)"
+      - "traefik.http.services.prowlarr.loadbalancer.server.port=9696"
+      - "traefik.http.routers.prowlarr.middlewares=authelia@docker"

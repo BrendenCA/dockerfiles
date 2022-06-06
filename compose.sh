@@ -12,6 +12,7 @@ SERVICES=(
     "nzbhydra"
     "sonarr"
     "radarr"
+    "prowlarr"
     "uploader"
     "promtail"
     "traefik"

@@ -36,7 +36,7 @@ if [[ $NZBPP_NZBNAME == *".DV."* || $NZBPP_NZBNAME == *".HDR10."* ]] && [[ $NZBP
         fi
       done <<< "${subtitleStreams}"
 
-      if [ -z "$ignoreStreams" ]; then
+      if [ -n "$ignoreStreams" ]; then
         echo "[DETAIL] Removing Subtitles: ${ignoreStreams[@]}"
       fi
 

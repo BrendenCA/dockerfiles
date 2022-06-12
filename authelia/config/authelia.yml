@@ -26,7 +26,7 @@ access_control:
   rules:
     - domain_regex: '^.*$'
       networks:
-      - 10.13.13.1/32 # WG Gateway
+      - 10.13.13.1/24 # WG Network
       - 172.21.0.1/32 # Core Gateway
       policy: bypass
 

@@ -5,6 +5,7 @@ networks:
     external: true
   plex:
     name: plex
+    external: true
 
 services:
   rclone:

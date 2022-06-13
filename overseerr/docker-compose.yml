@@ -1,0 +1,30 @@
+version: "3"
+
+networks:
+  core:
+    external: true
+  plex:
+    external: true
+
+services:
+  overseerr:
+    image: sctx/overseerr:latest
+    container_name: overseerr
+    environment:
+      - TZ
+    networks:
+      - core
+      - plex
+    expose:
+      - 5055
+    dns:
+      - ${WG_GATEWAY}
+    volumes:
+      - ../data/overseerr:/app/config
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=core"
+      - "traefik.http.routers.overseerr.entrypoints=websecure"
+      - "traefik.http.routers.overseerr.rule=Host(`${OVERSEERR_HOSTNAME}`)"
+      - "traefik.http.services.overseerr.loadbalancer.server.port=5055"
+    restart: unless-stopped

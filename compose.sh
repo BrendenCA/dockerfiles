@@ -6,10 +6,11 @@ NETWORKS=(
     "plex"
 )
 SERVICES=(
-    "plex"
-    "promtail"
-    "traefik"
     "wireguard"
+    "traefik"
+    "plex"
+    "overseerr"
+    "promtail"
 )
 
 if [ -z "$1" ]; then

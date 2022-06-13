@@ -12,12 +12,14 @@ services:
       - PGID=1000
       - TZ
       - SERVERURL=${HOSTNAME}
-      - SERVERPORT  # Issue: Manually change port
+      - SERVERPORT
       - PEERS
-      - PEERDNS
       - INTERNAL_SUBNET
     volumes:
       - ../data/wireguard:/config
       - /lib/modules:/lib/modules
     network_mode: host
     restart: unless-stopped
+
+# Note: Setup CoreDNS rewrite rule
+# Note: Change server port on wg0.conf

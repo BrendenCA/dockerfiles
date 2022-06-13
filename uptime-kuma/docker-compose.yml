@@ -14,6 +14,8 @@ services:
       - ../data/uptime-kuma:/app/data
     networks:
       - core
+    dns:
+      - ${WG_GATEWAY}
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.uptime-kuma.entrypoints=websecure"

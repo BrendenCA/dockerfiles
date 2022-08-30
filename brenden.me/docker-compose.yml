@@ -6,7 +6,7 @@ networks:
 
 services:
   resume-web:
-    image: ghcr.io/brendenca/brenden.me:v0.0.2
+    image: ghcr.io/brendenca/brenden.me:v0.0.3
     container_name: resume-web
     expose:
       - 80

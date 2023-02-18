@@ -8,7 +8,7 @@ networks:
 
 services:
   sonarr:
-    image: lscr.io/linuxserver/sonarr:latest
+    image: linuxserver/sonarr:latest
     container_name: sonarr
     environment:
       - PUID=1000
@@ -36,7 +36,7 @@ services:
       - "traefik.http.routers.sonarr.middlewares=authelia@docker"
 
   sonarr4k:
-    image: lscr.io/linuxserver/sonarr:latest
+    image: linuxserver/sonarr:latest
     container_name: sonarr4k
     environment:
       - PUID=1000

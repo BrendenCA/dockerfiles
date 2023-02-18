@@ -8,7 +8,7 @@ networks:
 
 services:
   nzbhydra:
-    image: lscr.io/linuxserver/nzbhydra2:latest
+    image: linuxserver/nzbhydra2:latest
     container_name: nzbhydra
     environment:
       - PUID=1000

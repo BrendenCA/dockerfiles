@@ -19,7 +19,7 @@ SERVICES=(
 )
 
 if [ -z "$1" ]; then
-    echo "Usage: $0 up|down|ps"
+    echo "Usage: $0 up|down|ps|pull"
     exit 1
 fi
 
@@ -37,6 +37,9 @@ elif [ "$1" == "down" ]; then
 elif [ "$1" == "ps" ]; then
     echo "Check services..."
     command="ps"
+elif [ "$1" == "pull" ]; then
+    echo "Updating images..."
+    command="pull"
 fi
 
 if [ -n "$command" ]; then

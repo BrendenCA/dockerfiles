@@ -9,7 +9,6 @@ NETWORKS=(
 SERVICES=(
     "rclone"
     "nzbget"
-    "nzbhydra"
     "sonarr"
     "radarr"
     "prowlarr"

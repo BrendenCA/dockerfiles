@@ -1,0 +1,24 @@
+version: "3"
+
+networks:
+  core:
+    external: true
+
+services:
+  f1webviewer:
+    image: ghcr.io/iebb/f1webviewer-selfhosted:latest
+    container_name: f1webviewer
+    networks:
+      - core
+    expose:
+      - 13331
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=core"
+      - "traefik.http.routers.f1webviewer.entrypoints=websecure"
+      - "traefik.http.routers.f1webviewer.rule=Host(${F1_HOSTNAMES})"
+      - "traefik.http.routers.f1webviewer.middlewares=f1webviewer"
+      - "traefik.http.services.f1webviewer.loadbalancer.server.port=13331"
+      - "traefik.http.middlewares.f1webviewer.headers.customrequestheaders.Cloudfront-Viewer-Country=${F1_VIEWER_COUNTRY}"
+    restart: unless-stopped
+    command: -listen :13331 -login ${F1_USERNAME} -password ${F1_PASSWORD}

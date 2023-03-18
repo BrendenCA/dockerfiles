@@ -5,7 +5,11 @@ global:
 log:
   level: INFO
 
-accessLog: {}
+accessLog:
+  format: json
+  fields:
+    headers:
+      defaultMode: keep
 
 api:
   dashboard: true

@@ -2,7 +2,7 @@ version: "3"
 
 services:
   volume-backup:
-    image: ghcr.io/brendenca/docker-volume-backup:v1.1.2
+    image: ghcr.io/brendenca/docker-volume-backup:v1.2.0
     container_name: volume-backup
     environment:
       - AWS_ACCESS_KEY_ID

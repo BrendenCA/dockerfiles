@@ -11,7 +11,6 @@ SERVICES=(
     "plex"
     "overseerr"
     "promtail"
-    "f1webviewer"
 )
 
 if [ -z "$1" ]; then

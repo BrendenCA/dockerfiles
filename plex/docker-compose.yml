@@ -48,7 +48,7 @@ services:
     restart: unless-stopped
 
   plex:
-    image: plexinc/pms-docker:public
+    image: linuxserver/plex:latest
     container_name: plex
     networks:
       - core
@@ -65,6 +65,7 @@ services:
       - ../data/plex:/config
     environment:
       - TZ
+      - VERSION=public
     depends_on:
       - rclone
     labels:

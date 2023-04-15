@@ -43,7 +43,7 @@ services:
       - "traefik.http.middlewares.node_exporter.basicauth.users=${NODE_EXPORTER_AUTH}"
 
   cadvisor:
-    image: gcr.io/cadvisor/cadvisor:latest
+    image: zcube/cadvisor:latest
     container_name: cadvisor
     command:
       - '-url_base_prefix=/cadvisor'
